@@ -1,9 +1,10 @@
-version: '3'
+version: '3.8'
+
 services:
   app:
     build: .
     ports:
-      - "8081:8082"
+      - "8081:8082"  # Mappe le port 8082 du conteneur sur le port 8081 de la machine hôte
     container_name: springboot-app
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -16,10 +17,10 @@ services:
       - TWILIO_AUTH_TOKEN=dummy_twilio_token_for_testing
       - TWILIO_PHONE_NUMBER=+12345678900
     depends_on:
-      - db
+      - db  # S'assure que le service db est démarré avant l'application
     networks:
       - gymz-network
-    restart: on-failure
+    restart: on-failure  # Redémarre le service en cas de plantage
 
   db:
     image: mysql:8.0
@@ -28,12 +29,13 @@ services:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=gymzdb
     ports:
-      - "3306:3306"
+      - "3306:3306"  # Mappe le port 3306 du conteneur sur le port 3306 de la machine hôte
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql  # Persiste les données de la base de données
     networks:
       - gymz-network
 
+# Définition des réseaux et volumes
 networks:
   gymz-network:
     driver: bridge
