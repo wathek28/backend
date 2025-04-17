@@ -20,7 +20,12 @@ services:
       - db  # S'assure que le service db est démarré avant l'application
     networks:
       - gymz-network
-    restart: on-failure  # Redémarre le service en cas de plantage
+    restart: always  # Modifié à "always" pour s'assurer que le conteneur redémarre en cas d'échec
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   db:
     image: mysql:8.0
@@ -34,6 +39,7 @@ services:
       - mysql-data:/var/lib/mysql  # Persiste les données de la base de données
     networks:
       - gymz-network
+    restart: always  # S'assurer que le service MySQL redémarre si un problème survient
 
 # Définition des réseaux et volumes
 networks:
@@ -42,3 +48,4 @@ networks:
 
 volumes:
   mysql-data:
+    driver: local
