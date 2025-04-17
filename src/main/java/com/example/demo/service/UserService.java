@@ -198,7 +198,6 @@ public class UserService {
     }
 
 
-
     @Getter
     @Setter
     public static class ProfileUpdateDto {
@@ -220,6 +219,7 @@ public class UserService {
     public List<User> getAllGyms() {
         return userRepository.findByRole(Role.GYM);
     }
+
     @Transactional
     public CoachProfileDto getCoachById(Long id) {
         User coach = userRepository.findById(id)
@@ -231,7 +231,6 @@ public class UserService {
 
         return new CoachProfileDto(coach);
     }
-
 
 
     @Setter
@@ -410,7 +409,8 @@ public class UserService {
         logger.info("Mise à jour du profil coach pour : {}", phoneNumber);
         return new CoachProfileDto(userRepository.save(user));
     }
-    ////////////comentaire
+
+    /// /////////comentaire
 
 
     @Autowired
@@ -436,7 +436,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    /////////// upodate profil user
+    /// //////// upodate profil user
     @Transactional
     public UserProfileDto updateUserPhoto(String phoneNumber, MultipartFile photoFile) {
         User user = findUserByPhoneNumber(phoneNumber);
@@ -524,7 +524,6 @@ public class UserService {
     }
 
 
-
     @Transactional
     public UserProfileDto modifierUser(Long userId, UserModificationDto modificationDto) {
         // Find user by ID instead of phone number
@@ -590,7 +589,7 @@ public class UserService {
         private String address;
     }
 
-    //////////gym
+    /// ///////gym
     @Data
     @AllArgsConstructor
     public static class GymProfileDto {
@@ -615,8 +614,6 @@ public class UserService {
             this.address = user.getAddress(); // Get address from user
         }
     }
-
-
 
 
 }

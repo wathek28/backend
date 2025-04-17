@@ -1,0 +1,42 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "8081:8082"
+    container_name: springboot-app
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/gymzdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - STRIPE_API_KEY=sk_test_dummy_key_for_testing_only
+      - JWT_SECRET=your_jwt_secret_key_for_testing_use_a_strong_key_in_production
+      - TWILIO_ACCOUNT_SID=dummy_twilio_sid_for_testing
+      - TWILIO_AUTH_TOKEN=dummy_twilio_token_for_testing
+      - TWILIO_PHONE_NUMBER=+12345678900
+    depends_on:
+      - db
+    networks:
+      - gymz-network
+    restart: on-failure
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=gymzdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - gymz-network
+
+networks:
+  gymz-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
