@@ -2,9 +2,12 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: gymz-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8081:8082"  # Mappe le port 8082 du conteneur sur le port 8081 de la machine hôte
+      - "8081:8082"
     container_name: springboot-app
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -16,35 +19,54 @@ services:
       - TWILIO_ACCOUNT_SID=dummy_twilio_sid_for_testing
       - TWILIO_AUTH_TOKEN=dummy_twilio_token_for_testing
       - TWILIO_PHONE_NUMBER=+12345678900
+      - SERVER_PORT=8082
     depends_on:
-      - db  # S'assure que le service db est démarré avant l'application
+      db:
+        condition: service_healthy
     networks:
       - gymz-network
-    restart: always  # Modifié à "always" pour s'assurer que le conteneur redémarre en cas d'échec
+    restart: always
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   db:
-    image: mysql:8.0
+    image: mysql:8.0.42
     container_name: mysql-db
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=gymzdb
+      - MYSQL_USER=gymz
+      - MYSQL_PASSWORD=password
     ports:
-      - "3306:3306"  # Mappe le port 3306 du conteneur sur le port 3306 de la machine hôte
+      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql  # Persiste les données de la base de données
+      - mysql-data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
       - gymz-network
-    restart: always  # S'assurer que le service MySQL redémarre si un problème survient
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
-# Définition des réseaux et volumes
 networks:
   gymz-network:
     driver: bridge
+    name: gymz-network
 
 volumes:
   mysql-data:
