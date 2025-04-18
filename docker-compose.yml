@@ -16,6 +16,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - STRIPE_API_KEY=sk_test_dummy_key_for_testing_only
       - JWT_SECRET=your_jwt_secret_key_for_testing_use_a_strong_key_in_production
+      - JWT_EXPIRATION=86400000
       - TWILIO_ACCOUNT_SID=dummy_twilio_sid_for_testing
       - TWILIO_AUTH_TOKEN=dummy_twilio_token_for_testing
       - TWILIO_PHONE_NUMBER=+12345678900
@@ -45,7 +46,7 @@ services:
       - MYSQL_USER=gymz
       - MYSQL_PASSWORD=password
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init-scripts:/docker-entrypoint-initdb.d
